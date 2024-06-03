@@ -4,7 +4,7 @@
 addEventListener("load", function () {
   // Canvas setup
   const canvas = document.querySelector("canvas");
-  const context = canvas.getContext("2d");
+  const ctx = canvas.getContext("2d");
   canvas.width = 1500;
   canvas.height = 500;
 
@@ -61,10 +61,20 @@ addEventListener("load", function () {
       this.player.update();
     }
 
-    draw() {
+    draw(context) {
       this.player.draw(context);
     }
   }
 
   const game = new Game(canvas.width, canvas.height);
+
+  // Animation loop setup
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    game.update();
+    game.draw(ctx);
+    requestAnimationFrame(animate);
+  }
+
+  animate();
 });
