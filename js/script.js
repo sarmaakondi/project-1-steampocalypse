@@ -1,15 +1,34 @@
 // Wrapping the canvas element with the window's "load" event listener
 // to ensure the script waits for all the resources
 // linked in the HTML to load completely
-addEventListener("load", function () {
+window.addEventListener("load", function () {
   // Canvas setup
   const canvas = document.querySelector("canvas");
-  const ctx = canvas.getContext("2d");
+  const context = canvas.getContext("2d");
   canvas.width = 1500;
-  canvas.height = 500;
+  canvas.height = 600;
 
   // Class to keep track of the specified player input
-  class InputHandler {}
+  class InputHandler {
+    constructor(game) {
+      this.game = game;
+      // Handling keydown event
+      window.addEventListener("keydown", (event) => {
+        if (
+          (event.key === "ArrowUp" || event.key === "ArrowDown") &&
+          this.game.keys.indexOf(event.key) === -1
+        ) {
+          this.game.keys.push(event.key);
+        }
+      });
+      // Handling keyup event
+      window.addEventListener("keyup", (event) => {
+        if (this.game.keys.indexOf(event.key) > -1) {
+          this.game.keys.splice(this.game.keys.indexOf(event.key), 1);
+        }
+      });
+    }
+  }
 
   // Class to handle the projectiles (lasers and all)
   class Projectile {}
@@ -26,13 +45,23 @@ addEventListener("load", function () {
       this.x = 20;
       this.y = 100;
       this.speedY = 0;
+      this.maxSpeed = 2;
     }
 
     update() {
+      // Handling the player movement on y-axis
+      if (this.game.keys.includes("ArrowUp")) {
+        this.speedY = -this.maxSpeed;
+      } else if (this.game.keys.includes("ArrowDown")) {
+        this.speedY = this.maxSpeed;
+      } else {
+        this.speedY = 0;
+      }
       this.y += this.speedY;
     }
 
     draw(context) {
+      // Draw the player
       context.fillRect(this.x, this.y, this.width, this.height);
     }
   }
@@ -55,6 +84,8 @@ addEventListener("load", function () {
       this.width = width;
       this.height = height;
       this.player = new Player(this);
+      this.input = new InputHandler(this);
+      this.keys = [];
     }
 
     update() {
@@ -70,9 +101,9 @@ addEventListener("load", function () {
 
   // Animation loop setup
   function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, canvas.width, canvas.height);
     game.update();
-    game.draw(ctx);
+    game.draw(context);
     requestAnimationFrame(animate);
   }
 
