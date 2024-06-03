@@ -12,16 +12,18 @@ window.addEventListener("load", function () {
   class InputHandler {
     constructor(game) {
       this.game = game;
-      // Handling keydown event
+      // Handle keydown event
       window.addEventListener("keydown", (event) => {
         if (
           (event.key === "ArrowUp" || event.key === "ArrowDown") &&
           this.game.keys.indexOf(event.key) === -1
         ) {
           this.game.keys.push(event.key);
+        } else if (event.key === " ") {
+          this.game.player.shootTop();
         }
       });
-      // Handling keyup event
+      // Handle keyup event
       window.addEventListener("keyup", (event) => {
         if (this.game.keys.indexOf(event.key) > -1) {
           this.game.keys.splice(this.game.keys.indexOf(event.key), 1);
@@ -31,7 +33,31 @@ window.addEventListener("load", function () {
   }
 
   // Class to handle the projectiles (lasers and all)
-  class Projectile {}
+  class Projectile {
+    constructor(game, x, y) {
+      this.game = game;
+      this.x = x;
+      this.y = y;
+      this.width = 10;
+      this.height = 3;
+      this.speed = 3;
+      this.markedForDeletion = false;
+    }
+
+    update() {
+      // Handle projectiles speed and state
+      this.x += this.speed;
+      if (this.x > this.game.width * 0.8) {
+        this.markedForDeletion = true;
+      }
+    }
+
+    draw(context) {
+      // Draw projectiles
+      context.fillStyle = "gold";
+      context.fillRect(this.x, this.y, this.width, this.height);
+    }
+  }
 
   // Class to handle the falling parts and screws
   class Particle {}
@@ -46,10 +72,11 @@ window.addEventListener("load", function () {
       this.y = 100;
       this.speedY = 0;
       this.maxSpeed = 2;
+      this.projectiles = [];
     }
 
     update() {
-      // Handling the player movement on y-axis
+      // Handle the player movement on y-axis
       if (this.game.keys.includes("ArrowUp")) {
         this.speedY = -this.maxSpeed;
       } else if (this.game.keys.includes("ArrowDown")) {
@@ -58,11 +85,33 @@ window.addEventListener("load", function () {
         this.speedY = 0;
       }
       this.y += this.speedY;
+      // Handle projectiles
+      this.projectiles.forEach((projectile) => {
+        projectile.update();
+      });
+      this.projectiles = this.projectiles.filter(
+        (projectile) => !projectile.markedForDeletion
+      );
     }
 
     draw(context) {
-      // Draw the player
+      // Draw player
+      context.fillStyle = "black";
       context.fillRect(this.x, this.y, this.width, this.height);
+      // Draw projectiles
+      this.projectiles.forEach((projectile) => {
+        projectile.draw(context);
+      });
+    }
+
+    shootTop() {
+      // Shoot projectile from top and handle the ammo state
+      if (this.game.ammo > 0) {
+        this.projectiles.push(
+          new Projectile(this.game, this.x + 80, this.y + 30)
+        );
+        this.game.ammo--;
+      }
     }
   }
 
@@ -86,6 +135,7 @@ window.addEventListener("load", function () {
       this.player = new Player(this);
       this.input = new InputHandler(this);
       this.keys = [];
+      this.ammo = 20;
     }
 
     update() {
