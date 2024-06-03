@@ -18,7 +18,24 @@ addEventListener("load", function () {
   class Particle {}
 
   // Class to control the main character, spritesheet to animate and so on
-  class Player {}
+  class Player {
+    constructor(game) {
+      this.game = game;
+      this.width = 120;
+      this.height = 190;
+      this.x = 20;
+      this.y = 100;
+      this.speedY = 0;
+    }
+
+    update() {
+      this.y += this.speedY;
+    }
+
+    draw(context) {
+      context.fillRect(this.x, this.y, this.width, this.height);
+    }
+  }
 
   // Class acting as a blueprint to create and handle various enemeies
   class Enemy {}
@@ -33,5 +50,21 @@ addEventListener("load", function () {
   class UI {}
 
   // Class that brings everything together to create a playable game
-  class Game {}
+  class Game {
+    constructor(width, height) {
+      this.width = width;
+      this.height = height;
+      this.player = new Player(this);
+    }
+
+    update() {
+      this.player.update();
+    }
+
+    draw() {
+      this.player.draw(context);
+    }
+  }
+
+  const game = new Game(canvas.width, canvas.height);
 });
