@@ -125,7 +125,22 @@ window.addEventListener("load", function () {
   class Background {}
 
   // Class to display the score, timer and other required info to the player
-  class UI {}
+  class UI {
+    constructor(game) {
+      this.game = game;
+      this.fontSize = 25;
+      this.fontFamily = "Impact";
+      this.color = "gold";
+    }
+
+    draw(context) {
+      context.fillStyle = this.color;
+      // Draw the ammo and recharge state
+      for (let i = 0; i < this.game.ammo; i++) {
+        context.fillRect(20 + 5 * i, 50, 3, 20);
+      }
+    }
+  }
 
   // Class that brings everything together to create a playable game
   class Game {
@@ -134,6 +149,7 @@ window.addEventListener("load", function () {
       this.height = height;
       this.player = new Player(this);
       this.input = new InputHandler(this);
+      this.ui = new UI(this);
       this.keys = [];
       this.ammo = 20;
       this.maxAmmo = 50;
@@ -155,6 +171,7 @@ window.addEventListener("load", function () {
 
     draw(context) {
       this.player.draw(context);
+      this.ui.draw(context);
     }
   }
 
