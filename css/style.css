@@ -3,3 +3,12 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+canvas {
+  border: 3px solid black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(162, 120, 205);
+}
