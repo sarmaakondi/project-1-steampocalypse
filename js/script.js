@@ -317,7 +317,7 @@ window.addEventListener("load", function () {
     constructor(game) {
       this.game = game;
       this.fontSize = 25;
-      this.fontFamily = "League Gothic";
+      this.fontFamily = "Bangers";
       this.color = "white";
     }
 
@@ -339,23 +339,23 @@ window.addEventListener("load", function () {
         let message1;
         let message2;
         if (this.game.score >= this.game.winningScore) {
-          message1 = "You Win!";
-          message2 = "Well done!";
+          message1 = "Gears of Glory Grind On! ";
+          message2 = "Your mechanical marvel hums with victory!";
         } else {
-          message1 = "You Lose!";
-          message2 = "Try again next time!";
+          message1 = "A Cog in the Wrong Machine!";
+          message2 = "Don't fret, grease the gears and try again!";
         }
-        context.font = "50px " + this.fontFamily;
+        context.font = "80px " + this.fontFamily;
         context.fillText(
           message1,
           this.game.width * 0.5,
-          this.game.height * 0.5 - 40
+          this.game.height * 0.5 - 25
         );
         context.font = "25px " + this.fontFamily;
         context.fillText(
           message2,
           this.game.width * 0.5,
-          this.game.height * 0.5 + 40
+          this.game.height * 0.5 + 25
         );
       }
       // Draw the ammo and recharge state
