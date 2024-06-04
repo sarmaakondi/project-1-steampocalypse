@@ -73,6 +73,10 @@ window.addEventListener("load", function () {
       this.speedY = 0;
       this.maxSpeed = 2;
       this.projectiles = [];
+      this.image = document.getElementById("player");
+      this.frameX = 0;
+      this.frameY = 0;
+      this.maxFrame = 37;
     }
 
     update() {
@@ -92,12 +96,29 @@ window.addEventListener("load", function () {
       this.projectiles = this.projectiles.filter(
         (projectile) => !projectile.markedForDeletion
       );
+      // Handle sprite animation
+      if (this.frameX < this.maxFrame) {
+        this.frameX++;
+      } else {
+        this.frameX = 0;
+      }
     }
 
     draw(context) {
       // Draw player
       context.fillStyle = "black";
       context.fillRect(this.x, this.y, this.width, this.height);
+      context.drawImage(
+        this.image,
+        this.frameX * this.width,
+        this.frameY * this.height,
+        this.width,
+        this.height,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
       // Draw projectiles
       this.projectiles.forEach((projectile) => {
         projectile.draw(context);
