@@ -94,6 +94,12 @@ window.addEventListener("load", function () {
         this.speedY = 0;
       }
       this.y += this.speedY;
+      // Handle player movement boundaries
+      if (this.y > this.game.height - this.height * 0.5) {
+        this.y = this.game.height - this.height * 0.5;
+      } else if (this.y < -this.height * 0.5) {
+        this.y = -this.height * 0.5;
+      }
       // Handle projectiles
       this.projectiles.forEach((projectile) => {
         projectile.update();
@@ -213,9 +219,10 @@ window.addEventListener("load", function () {
         this.width,
         this.height
       );
-      context.fillStyle = "black";
-      context.font = "25px Roboto";
-      context.fillText(this.lives, this.x, this.y);
+      if (this.game.debug) {
+        context.font = "25px Roboto";
+        context.fillText(this.lives, this.x, this.y);
+      }
     }
   }
 
@@ -392,7 +399,7 @@ window.addEventListener("load", function () {
       this.gameTime = 0;
       this.timeLimit = 15000;
       this.speed = 1;
-      this.debug = true;
+      this.debug = false;
     }
 
     update(deltaTime) {
