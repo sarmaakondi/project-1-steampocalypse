@@ -134,7 +134,7 @@ window.addEventListener("load", function () {
     }
 
     draw(context) {
-      context.fillStyle = "red";
+      context.fillStyle = "tomato";
       context.fillRect(this.x, this.y, this.width, this.height);
       context.fillStyle = "black";
       context.font = "25px Roboto";
@@ -178,6 +178,31 @@ window.addEventListener("load", function () {
       // Draw the ammo and recharge state
       for (let i = 0; i < this.game.ammo; i++) {
         context.fillRect(20 + 5 * i, 50, 3, 20);
+      }
+      // Draw game over messages
+      if (this.game.gameOver) {
+        context.textAlign = "center";
+        let message1;
+        let message2;
+        if (this.game.score >= this.game.winningScore) {
+          message1 = "You Win!";
+          message2 = "Well done!";
+        } else {
+          message1 = "You Lose!";
+          message2 = "Try again next time!";
+        }
+        context.font = "50px " + this.fontFamily;
+        context.fillText(
+          message1,
+          this.game.width * 0.5,
+          this.game.height * 0.5 - 40
+        );
+        context.font = "25px " + this.fontFamily;
+        context.fillText(
+          message2,
+          this.game.width * 0.5,
+          this.game.height * 0.5 + 40
+        );
       }
       context.restore();
     }
