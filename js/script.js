@@ -44,6 +44,7 @@ window.addEventListener("load", function () {
       this.height = 3;
       this.speed = 3;
       this.markedForDeletion = false;
+      this.image = document.getElementById("projectile");
     }
 
     update() {
@@ -55,9 +56,8 @@ window.addEventListener("load", function () {
     }
 
     draw(context) {
-      // Draw projectiles
-      context.fillStyle = "gold";
-      context.fillRect(this.x, this.y, this.width, this.height);
+      // Draw projectile
+      context.drawImage(this.image, this.x, this.y);
     }
   }
 
