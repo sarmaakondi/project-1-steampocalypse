@@ -79,9 +79,12 @@ window.addEventListener("load", function () {
       this.frameX = 0;
       this.frameY = 0;
       this.maxFrame = 37;
+      this.powerUp = false;
+      this.powerUpTimer = 0;
+      this.powerUpLimit = 10000;
     }
 
-    update() {
+    update(deltaTime) {
       // Handle the player movement on y-axis
       if (this.game.keys.includes("ArrowUp")) {
         this.speedY = -this.maxSpeed;
@@ -104,6 +107,18 @@ window.addEventListener("load", function () {
       } else {
         this.frameX = 0;
       }
+      // Handle power up
+      if (this.powerUp) {
+        if (this.powerUpTimer > this.powerUpLimit) {
+          this.powerUpTimer = 0;
+          this.powerUp = false;
+          this.frameY = 0;
+        } else {
+          this.powerUpTimer += deltaTime;
+          this.frameY = 1;
+          this.game.ammo += 0.1;
+        }
+      }
     }
 
     draw(context) {
@@ -111,6 +126,10 @@ window.addEventListener("load", function () {
       if (this.game.debug) {
         context.strokeRect(this.x, this.y, this.width, this.height);
       }
+      // Draw projectiles
+      this.projectiles.forEach((projectile) => {
+        projectile.draw(context);
+      });
       // Draw player
       context.drawImage(
         this.image,
@@ -123,20 +142,34 @@ window.addEventListener("load", function () {
         this.width,
         this.height
       );
-      // Draw projectiles
-      this.projectiles.forEach((projectile) => {
-        projectile.draw(context);
-      });
     }
 
     shootTop() {
-      // Shoot projectile from top and handle the ammo state
+      // Shoot projectile from mouth and handle the ammo state
       if (this.game.ammo > 0) {
         this.projectiles.push(
           new Projectile(this.game, this.x + 80, this.y + 30)
         );
         this.game.ammo--;
       }
+      if (this.powerUp) {
+        this.shootBottom();
+      }
+    }
+
+    shootBottom() {
+      // Shoot projectile from tail and handle the ammo state
+      if (this.game.ammo > 0) {
+        this.projectiles.push(
+          new Projectile(this.game, this.x + 80, this.y + 175)
+        );
+      }
+    }
+
+    enterPowerUp() {
+      this.powerUpTimer = 0;
+      this.powerUp = true;
+      this.game.ammo = this.game.maxAmmo;
     }
   }
 
@@ -297,10 +330,6 @@ window.addEventListener("load", function () {
       context.shadowColor = "black";
       // Draw the score
       context.fillText("Score: " + this.game.score, 20, 40);
-      // Draw the ammo and recharge state
-      for (let i = 0; i < this.game.ammo; i++) {
-        context.fillRect(20 + 5 * i, 50, 3, 20);
-      }
       // Draw the timer
       const formattedTime = (this.game.gameTime * 0.001).toFixed(1);
       context.fillText("Timer: " + formattedTime, 20, 100);
@@ -328,6 +357,13 @@ window.addEventListener("load", function () {
           this.game.width * 0.5,
           this.game.height * 0.5 + 40
         );
+      }
+      // Draw the ammo and recharge state
+      if (this.game.player.powerUp) {
+        context.fillStyle = "#ffffbd";
+      }
+      for (let i = 0; i < this.game.ammo; i++) {
+        context.fillRect(20 + 5 * i, 50, 3, 20);
       }
       context.restore();
     }
@@ -371,7 +407,7 @@ window.addEventListener("load", function () {
       this.background.update();
       this.background.layer4.update();
       // Update player state
-      this.player.update();
+      this.player.update(deltaTime);
       // Update ammo (projectile) state
       if (this.ammoTimer > this.ammoInterval) {
         if (this.ammo < this.maxAmmo) {
@@ -386,6 +422,11 @@ window.addEventListener("load", function () {
         enemy.update();
         if (this.checkCollision(this.player, enemy)) {
           enemy.markedForDeletion = true;
+          if (enemy.type === "lucky") {
+            this.player.enterPowerUp();
+          } else {
+            this.score--;
+          }
         }
         this.player.projectiles.forEach((projectile) => {
           if (this.checkCollision(projectile, enemy)) {
