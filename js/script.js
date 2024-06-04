@@ -21,6 +21,8 @@ window.addEventListener("load", function () {
           this.game.keys.push(event.key);
         } else if (event.key === " ") {
           this.game.player.shootTop();
+        } else if (event.key === "d") {
+          this.game.debug = !this.game.debug;
         }
       });
       // Handle keyup event
@@ -105,9 +107,11 @@ window.addEventListener("load", function () {
     }
 
     draw(context) {
+      // Debug mode to enable or disable attack box
+      if (this.game.debug) {
+        context.strokeRect(this.x, this.y, this.width, this.height);
+      }
       // Draw player
-      context.fillStyle = "black";
-      context.fillRect(this.x, this.y, this.width, this.height);
       context.drawImage(
         this.image,
         this.frameX * this.width,
@@ -302,6 +306,7 @@ window.addEventListener("load", function () {
       this.gameTime = 0;
       this.timeLimit = 10000;
       this.speed = 1;
+      this.debug = true;
     }
 
     update(deltaTime) {
