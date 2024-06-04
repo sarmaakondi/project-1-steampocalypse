@@ -116,7 +116,35 @@ window.addEventListener("load", function () {
   }
 
   // Class acting as a blueprint to create and handle various enemeies
-  class Enemy {}
+  class Enemy {
+    constructor(game) {
+      this.game = game;
+      this.x = this.game.width;
+      this.speedX = Math.random() * -1.5 - 0.5;
+      this.markedForDeletion = false;
+    }
+
+    update() {
+      this.x += this.speedX;
+      if (this.x + this.width < 0) {
+        this.markedForDeletion = true;
+      }
+    }
+
+    draw(context) {
+      context.fillStyle = "red";
+      context.fillRect(this.x, this.y, this.width, this.height);
+    }
+  }
+
+  class Angler1 extends Enemy {
+    constructor(game) {
+      super(game);
+      this.width = 228 * 0.3;
+      this.height = 169 * 0.3;
+      this.y = Math.random() * (this.game.height * 0.9 - this.height);
+    }
+  }
 
   // Class to handle multiple backgrounds to create parllax effect
   class Layer {}
@@ -151,14 +179,20 @@ window.addEventListener("load", function () {
       this.input = new InputHandler(this);
       this.ui = new UI(this);
       this.keys = [];
+      this.enemies = [];
+      this.enemyTimer = 0;
+      this.enemyInterval = 1000;
       this.ammo = 20;
       this.maxAmmo = 50;
       this.ammoTimer = 0;
       this.ammoInterval = 500;
+      this.gameOver = false;
     }
 
     update(deltaTime) {
+      // Update player state
       this.player.update();
+      // Update ammo (projectile) state
       if (this.ammoTimer > this.ammoInterval) {
         if (this.ammo < this.maxAmmo) {
           this.ammo++;
@@ -167,11 +201,32 @@ window.addEventListener("load", function () {
       } else {
         this.ammoTimer += deltaTime;
       }
+      // Update enemy state
+      this.enemies.forEach((enemy) => {
+        enemy.update();
+      });
+      this.enemies = this.enemies.filter((enemy) => !enemy.markedForDeletion);
+      if (this.enemyTimer > this.enemyInterval && !this.gameOver) {
+        this.addEnemy();
+        this.enemyTimer = 0;
+      } else {
+        this.enemyTimer += deltaTime;
+      }
     }
 
     draw(context) {
+      // Draw player
       this.player.draw(context);
+      // Draw ui
       this.ui.draw(context);
+      // Draw enemies
+      this.enemies.forEach((enemy) => {
+        enemy.draw(context);
+      });
+    }
+
+    addEnemy() {
+      this.enemies.push(new Angler1(this));
     }
   }
 
