@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "League Gothic", sans-serif;
 }
 
 canvas {
@@ -19,6 +20,9 @@ canvas {
 #layer2,
 #layer3,
 #layer4,
-#player {
+#player,
+#angler1,
+#angler2,
+#lucky {
   display: none;
 }
