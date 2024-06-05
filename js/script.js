@@ -41,14 +41,13 @@ window.addEventListener("load", function () {
       this.powerDownSound = document.getElementById("powerdown");
       this.explosionSound = document.getElementById("explosion");
       this.shotSound = document.getElementById("shot");
-      this.hitSound = document.getElementById("hit");
-      this.shieldSound = document.getElementById("shield");
+      this.shieldSound = document.getElementById("shieldSound");
       this.bgmSound = document.getElementById("bgm");
     }
 
     powerUp() {
       this.powerUpSound.currentTime = 0;
-      this.powerUpSound.volume = 0.3;
+      this.powerUpSound.volume = 0.2;
       this.powerUpSound.play();
     }
 
@@ -70,28 +69,67 @@ window.addEventListener("load", function () {
       this.shotSound.play();
     }
 
-    hit() {
-      this.hitSound.currentTime = 0;
-      this.hitSound.volume = 0.2;
-      this.hitSound.play();
-    }
-
     shield() {
       this.shieldSound.currentTime = 0;
-      this.shieldSound.volume = 0.25;
+      this.shieldSound.volume = 0.2;
       this.shieldSound.play();
     }
 
     bgm() {
       this.bgmSound.currentTime = 0;
-      this.bgmSound.volume = 0.35;
+      this.bgmSound.volume = 0.3;
       this.bgmSound.play();
     }
   }
 
   // Play BGM
-  const bgmSoundController = new SoundController();
-  bgmSoundController.bgm();
+  // const bgmSoundController = new SoundController();
+  // bgmSoundController.bgm();
+
+  // Class to handle the shield and its animation
+  class Shield {
+    constructor(game) {
+      this.game = game;
+      this.width = this.game.player.width;
+      this.height = this.game.player.height;
+      this.frameX = 0;
+      this.maxFrame = 24;
+      this.image = document.getElementById("shield");
+      this.fps = 30;
+      this.timer = 0;
+      this.interval = 1000 / this.fps;
+    }
+
+    update(deltaTime) {
+      if (this.frameX < this.maxFrame) {
+        if (this.timer > this.interval) {
+          this.frameX++;
+          this.timer = 0;
+        } else {
+          this.timer += deltaTime;
+        }
+      }
+    }
+
+    draw(context) {
+      context.drawImage(
+        this.image,
+        this.frameX * this.width,
+        0,
+        this.width,
+        this.height,
+        this.game.player.x,
+        this.game.player.y,
+        this.width,
+        this.height
+      );
+    }
+
+    reset() {
+      this.frameX = 0;
+      this.game.sound.shield();
+    }
+  }
 
   // Class to handle the projectiles (lasers and all)
   class Projectile {
@@ -99,24 +137,55 @@ window.addEventListener("load", function () {
       this.game = game;
       this.x = x;
       this.y = y;
-      this.width = 10;
-      this.height = 3;
-      this.speed = 3;
+      // Disabled projectile without animation
+      // this.width = 10;
+      // this.height = 3;
+      // this.image = document.getElementById("projectile");
+      this.image = document.getElementById("fireball");
+      this.width = 36.25;
+      this.height = 20;
+      this.speed = Math.random() * 0.2 + 2.8;
+      this.frameX = 0;
+      this.maxFrame = 3;
+      this.fps = 10;
+      this.timer = 0;
+      this.interval = 1000 / this.fps;
       this.markedForDeletion = false;
-      this.image = document.getElementById("projectile");
     }
 
-    update() {
+    update(deltaTime) {
       // Handle projectiles speed and state
       this.x += this.speed;
+      if (this.timer > this.interval) {
+        if (this.frameX < this.maxFrame) {
+          this.frameX++;
+        } else {
+          this.frameX = 0;
+        }
+        this.timer = 0;
+      } else {
+        this.timer += deltaTime;
+      }
       if (this.x > this.game.width * 0.8) {
         this.markedForDeletion = true;
       }
     }
 
     draw(context) {
-      // Draw projectile
-      context.drawImage(this.image, this.x, this.y);
+      // Disabled old projectile
+      // context.drawImage(this.image, this.x, this.y);
+      // Draw new projectile
+      context.drawImage(
+        this.image,
+        this.frameX * this.width,
+        0,
+        this.width,
+        this.height,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
     }
   }
 
@@ -216,7 +285,7 @@ window.addEventListener("load", function () {
       }
       // Handle projectiles
       this.projectiles.forEach((projectile) => {
-        projectile.update();
+        projectile.update(deltaTime);
       });
       this.projectiles = this.projectiles.filter(
         (projectile) => !projectile.markedForDeletion
@@ -439,11 +508,11 @@ window.addEventListener("load", function () {
       this.height = 240;
       this.y = Math.random() * (this.game.height * 0.95 - this.height);
       this.image = document.getElementById("moonfish");
-      this.frameY = Math.floor(Math.random() * 2);
+      this.frameY = 0;
       this.lives = 10;
       this.score = this.lives;
       this.type = "moon";
-      this.speedX = Math.random() * -1.2 - 1.8;
+      this.speedX = Math.random() * -1.2 - 2;
     }
   }
 
@@ -627,6 +696,7 @@ window.addEventListener("load", function () {
       this.input = new InputHandler(this);
       this.ui = new UI(this);
       this.sound = new SoundController();
+      this.shield = new Shield(this);
       this.keys = [];
       this.enemies = [];
       this.particles = [];
@@ -642,7 +712,7 @@ window.addEventListener("load", function () {
       this.score = 0;
       this.winningScore = 300;
       this.gameTime = 0;
-      this.timeLimit = 110000;
+      this.timeLimit = 10000;
       this.speed = 1;
       this.debug = false;
     }
@@ -669,6 +739,8 @@ window.addEventListener("load", function () {
       } else {
         this.ammoTimer += deltaTime;
       }
+      // Update shield
+      this.shield.update(deltaTime);
       // Update particles
       this.particles.forEach((particle) => {
         particle.update();
@@ -689,7 +761,7 @@ window.addEventListener("load", function () {
         if (this.checkCollision(this.player, enemy)) {
           enemy.markedForDeletion = true;
           this.addExplosion(enemy);
-          this.sound.hit();
+          this.shield.reset();
           // Draw 10 projectiles when enemy collides with player
           for (let i = 0; i < enemy.score; i++) {
             this.particles.push(
@@ -778,6 +850,8 @@ window.addEventListener("load", function () {
       this.ui.draw(context);
       // Draw player
       this.player.draw(context);
+      // Draw shield
+      this.shield.draw(context);
       // Draw particles
       this.particles.forEach((particle) => {
         particle.draw(context);
