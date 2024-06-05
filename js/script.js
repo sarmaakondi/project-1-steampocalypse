@@ -407,6 +407,61 @@ window.addEventListener("load", function () {
     }
   }
 
+  // Class to handle the types of explosion animations
+  class Explosion {
+    constructor(game, x, y) {
+      this.game = game;
+      this.spriteHeight = 200;
+      this.frameX = 0;
+      this.maxFrame = 8;
+      this.fps = 30;
+      this.timer = 0;
+      this.interval = 1000 / this.fps;
+      this.markedForDeletion = false;
+    }
+
+    update(deltaTime) {
+      this.x -= this.game.speed;
+      if (this.timer > this.interval) {
+        this.frameX++;
+        this.timer = 0;
+      } else {
+        this.timer += deltaTime;
+      }
+      if (this.frameX > this.maxFrame) {
+        this.markedForDeletion = true;
+      }
+    }
+
+    draw(context) {
+      context.drawImage(
+        this.image,
+        this.frameX * this.spriteWidth,
+        0,
+        this.spriteWidth,
+        this.spriteHeight,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
+    }
+  }
+
+  class SmokeExplosion extends Explosion {
+    constructor(game, x, y) {
+      super(game, x, y);
+      this.image = document.getElementById("smokeExplosion");
+      this.spriteWidth = 200;
+      this.width = this.spriteWidth;
+      this.height = this.spriteHeight;
+      this.x = x - this.width * 0.5;
+      this.y = y - this.height * 0.5;
+    }
+  }
+
+  class FireExplosion extends Explosion {}
+
   // Class to display the score, timer and other required info to the player
   class UI {
     constructor(game) {
@@ -476,6 +531,7 @@ window.addEventListener("load", function () {
       this.keys = [];
       this.enemies = [];
       this.particles = [];
+      this.explosions = [];
       this.enemyTimer = 0;
       this.enemyInterval = 1000;
       this.ammo = 20;
@@ -520,11 +576,19 @@ window.addEventListener("load", function () {
       this.particles = this.particles.filter(
         (particle) => !particle.markedForDeletion
       );
+      // Update explosions
+      this.explosions.forEach((explosion) => {
+        explosion.update(deltaTime);
+      });
+      this.explosions = this.explosions.filter(
+        (explosion) => !explosion.markedForDeletion
+      );
       // Update enemy state
       this.enemies.forEach((enemy) => {
         enemy.update();
         if (this.checkCollision(this.player, enemy)) {
           enemy.markedForDeletion = true;
+          this.addExplosion(enemy);
           // Draw 10 projectiles when enemy collides with player
           for (let i = 0; i < enemy.score; i++) {
             this.particles.push(
@@ -535,6 +599,7 @@ window.addEventListener("load", function () {
               )
             );
           }
+          // Powerup condition
           if (enemy.type === "lucky") {
             this.player.enterPowerUp();
           } else {
@@ -566,6 +631,8 @@ window.addEventListener("load", function () {
                 );
               }
               enemy.markedForDeletion = true;
+              this.addExplosion(enemy);
+              // Condition to create drones when hive is destroyed
               if (enemy.type === "hive") {
                 for (let i = 0; i < 5; i++) {
                   this.enemies.push(
@@ -587,6 +654,7 @@ window.addEventListener("load", function () {
           }
         });
       });
+      // Condition to add enemies dynamically
       this.enemies = this.enemies.filter((enemy) => !enemy.markedForDeletion);
       if (this.enemyTimer > this.enemyInterval && !this.gameOver) {
         this.addEnemy();
@@ -611,6 +679,11 @@ window.addEventListener("load", function () {
       this.enemies.forEach((enemy) => {
         enemy.draw(context);
       });
+      // Draw explosions
+      this.explosions.forEach((explosion) => {
+        explosion.draw(context);
+      });
+      // Adding layer4 after all the othe components to create depth
       this.background.layer4.draw(context);
     }
 
@@ -624,6 +697,19 @@ window.addEventListener("load", function () {
         this.enemies.push(new HiveWhale(this));
       } else {
         this.enemies.push(new LuckyFish(this));
+      }
+    }
+
+    addExplosion(enemy) {
+      const randomize = Math.random();
+      if (randomize < 1) {
+        this.explosions.push(
+          new SmokeExplosion(
+            this,
+            enemy.x + enemy.width * 0.5,
+            enemy.y + enemy.height * 0.5
+          )
+        );
       }
     }
 
@@ -645,8 +731,8 @@ window.addEventListener("load", function () {
     const deltaTime = timeStamp - lastTimeStamp;
     lastTimeStamp = timeStamp;
     context.clearRect(0, 0, canvas.width, canvas.height);
-    game.update(deltaTime);
     game.draw(context);
+    game.update(deltaTime);
     requestAnimationFrame(animate);
   }
 
