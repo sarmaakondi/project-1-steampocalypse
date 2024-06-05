@@ -516,6 +516,34 @@ window.addEventListener("load", function () {
     }
   }
 
+  class Stalker extends Enemy {
+    constructor(game) {
+      super(game);
+      this.width = 243;
+      this.height = 123;
+      this.y = Math.random() * (this.game.height * 0.95 - this.height);
+      this.image = document.getElementById("stalker");
+      this.frameY = 0;
+      this.lives = 5;
+      this.score = this.lives;
+      this.speedX = Math.random() * -1 - 1;
+    }
+  }
+
+  class Razorfin extends Enemy {
+    constructor(game) {
+      super(game);
+      this.width = 187;
+      this.height = 149;
+      this.y = Math.random() * (this.game.height * 0.95 - this.height);
+      this.image = document.getElementById("razorfin");
+      this.frameY = 0;
+      this.lives = 7;
+      this.score = this.lives;
+      this.speedX = Math.random() * -1 - 1;
+    }
+  }
+
   // Class to handle multiple backgrounds to create parllax effect
   class Layer {
     constructor(game, image, speedModifier) {
@@ -870,8 +898,12 @@ window.addEventListener("load", function () {
 
     addEnemy() {
       const randomize = Math.random();
-      if (randomize < 0.5) {
+      if (randomize < 0.1) {
         this.enemies.push(new Angler1(this));
+      } else if (randomize < 0.3) {
+        this.enemies.push(new Stalker(this));
+      } else if (randomize < 0.5) {
+        this.enemies.push(new Razorfin(this));
       } else if (randomize < 0.6) {
         this.enemies.push(new Angler2(this));
       } else if (randomize < 0.7) {
