@@ -34,6 +34,65 @@ window.addEventListener("load", function () {
     }
   }
 
+  // Class to handle the game sounds
+  class SoundController {
+    constructor() {
+      this.powerUpSound = document.getElementById("powerup");
+      this.powerDownSound = document.getElementById("powerdown");
+      this.explosionSound = document.getElementById("explosion");
+      this.shotSound = document.getElementById("shot");
+      this.hitSound = document.getElementById("hit");
+      this.shieldSound = document.getElementById("shield");
+      this.bgmSound = document.getElementById("bgm");
+    }
+
+    powerUp() {
+      this.powerUpSound.currentTime = 0;
+      this.powerUpSound.volume = 0.3;
+      this.powerUpSound.play();
+    }
+
+    powerDown() {
+      this.powerDownSound.currentTime = 0;
+      this.powerDownSound.volume = 0.2;
+      this.powerDownSound.play();
+    }
+
+    explosion() {
+      this.explosionSound.currentTime = 0;
+      this.explosionSound.volume = 0.2;
+      this.explosionSound.play();
+    }
+
+    shot() {
+      this.shotSound.currentTime = 0;
+      this.shotSound.volume = 0.2;
+      this.shotSound.play();
+    }
+
+    hit() {
+      this.hitSound.currentTime = 0;
+      this.hitSound.volume = 0.2;
+      this.hitSound.play();
+    }
+
+    shield() {
+      this.shieldSound.currentTime = 0;
+      this.shieldSound.volume = 0.25;
+      this.shieldSound.play();
+    }
+
+    bgm() {
+      this.bgmSound.currentTime = 0;
+      this.bgmSound.volume = 0.35;
+      this.bgmSound.play();
+    }
+  }
+
+  // Play BGM
+  const bgmSoundController = new SoundController();
+  bgmSoundController.bgm();
+
   // Class to handle the projectiles (lasers and all)
   class Projectile {
     constructor(game, x, y) {
@@ -174,6 +233,7 @@ window.addEventListener("load", function () {
           this.powerUpTimer = 0;
           this.powerUp = false;
           this.frameY = 0;
+          this.game.sound.powerDown();
         } else {
           this.powerUpTimer += deltaTime;
           this.frameY = 1;
@@ -215,6 +275,7 @@ window.addEventListener("load", function () {
         );
         this.game.ammo--;
       }
+      this.game.sound.shot();
       if (this.powerUp) {
         this.shootBottom();
       }
@@ -235,6 +296,7 @@ window.addEventListener("load", function () {
       if (this.game.ammo < this.game.maxAmmo) {
         this.game.ammo = this.game.maxAmmo;
       }
+      this.game.sound.powerUp();
     }
   }
 
@@ -279,7 +341,7 @@ window.addEventListener("load", function () {
         this.height
       );
       if (this.game.debug) {
-        context.font = "25px Roboto";
+        context.font = "25px Bangers";
         context.fillText(this.lives, this.x, this.y);
       }
     }
@@ -381,7 +443,7 @@ window.addEventListener("load", function () {
       this.lives = 10;
       this.score = this.lives;
       this.type = "moon";
-      this.speedX = Math.random() * -1.2 - 2;
+      this.speedX = Math.random() * -1.2 - 1.8;
     }
   }
 
@@ -564,6 +626,7 @@ window.addEventListener("load", function () {
       this.player = new Player(this);
       this.input = new InputHandler(this);
       this.ui = new UI(this);
+      this.sound = new SoundController();
       this.keys = [];
       this.enemies = [];
       this.particles = [];
@@ -577,9 +640,9 @@ window.addEventListener("load", function () {
       this.ammoInterval = 350;
       this.gameOver = false;
       this.score = 0;
-      this.winningScore = 80;
+      this.winningScore = 300;
       this.gameTime = 0;
-      this.timeLimit = 30000;
+      this.timeLimit = 110000;
       this.speed = 1;
       this.debug = false;
     }
@@ -626,6 +689,7 @@ window.addEventListener("load", function () {
         if (this.checkCollision(this.player, enemy)) {
           enemy.markedForDeletion = true;
           this.addExplosion(enemy);
+          this.sound.hit();
           // Draw 10 projectiles when enemy collides with player
           for (let i = 0; i < enemy.score; i++) {
             this.particles.push(
@@ -669,6 +733,7 @@ window.addEventListener("load", function () {
               }
               enemy.markedForDeletion = true;
               this.addExplosion(enemy);
+              this.sound.explosion();
               // Condition to trigger powerup if enemy is moonfish type
               if (enemy.type === "moon") {
                 this.player.enterPowerUp();
