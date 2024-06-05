@@ -62,7 +62,58 @@ window.addEventListener("load", function () {
   }
 
   // Class to handle the falling parts and screws
-  class Particle {}
+  class Particle {
+    constructor(game, x, y) {
+      this.game = game;
+      this.x = x;
+      this.y = y;
+      this.image = document.getElementById("gears");
+      this.frameX = Math.floor(Math.random() * 3);
+      this.frameY = Math.floor(Math.random() * 3);
+      this.spriteSize = 50;
+      this.sizeModifier = (Math.random() * 0.5 + 0.5).toFixed(1);
+      this.size = this.spriteSize * this.sizeModifier;
+      this.speedX = Math.random() * 6 - 3;
+      this.speedY = Math.random() * -15;
+      this.gravity = 0.5;
+      this.markedForDeletion = false;
+      this.angle = 0;
+      this.va = Math.random() * 0.2 - 0.1;
+      this.bounced = 0;
+      this.bottomBounceBoundary = Math.random() * 100 + 60;
+    }
+
+    update() {
+      this.angle += this.va;
+      this.speedY += this.gravity;
+      this.x -= this.speedX;
+      this.y += this.speedY;
+      if (this.y > this.game.height + this.size || this.x < -this.size) {
+        this.markedForDeletion = true;
+      }
+      if (
+        this.y > this.game.height - this.bottomBounceBoundary &&
+        this.bounced < 2
+      ) {
+        this.bounced++;
+        this.speedY *= -0.7;
+      }
+    }
+
+    draw(context) {
+      context.drawImage(
+        this.image,
+        this.frameX * this.spriteSize,
+        this.frameY * this.spriteSize,
+        this.spriteSize,
+        this.spriteSize,
+        this.x,
+        this.y,
+        this.size,
+        this.size
+      );
+    }
+  }
 
   // Class to control the main character, spritesheet to animate and so on
   class Player {
@@ -387,6 +438,7 @@ window.addEventListener("load", function () {
       this.ui = new UI(this);
       this.keys = [];
       this.enemies = [];
+      this.particles = [];
       this.enemyTimer = 0;
       this.enemyInterval = 1000;
       this.ammo = 20;
@@ -424,22 +476,58 @@ window.addEventListener("load", function () {
       } else {
         this.ammoTimer += deltaTime;
       }
+      // Update particles
+      this.particles.forEach((particle) => {
+        particle.update();
+      });
+      this.particles = this.particles.filter(
+        (particle) => !particle.markedForDeletion
+      );
       // Update enemy state
       this.enemies.forEach((enemy) => {
         enemy.update();
         if (this.checkCollision(this.player, enemy)) {
           enemy.markedForDeletion = true;
+          // Draw 10 projectiles when enemy collides with player
+          for (let i = 0; i < 10; i++) {
+            this.particles.push(
+              new Particle(
+                this,
+                enemy.x + enemy.width * 0.5,
+                enemy.y + enemy.height * 0.5
+              )
+            );
+          }
           if (enemy.type === "lucky") {
             this.player.enterPowerUp();
           } else {
             this.score--;
           }
         }
+        // Check for collision, update score and enemy lives
         this.player.projectiles.forEach((projectile) => {
           if (this.checkCollision(projectile, enemy)) {
             enemy.lives--;
             projectile.markedForDeletion = true;
+            // Draw one particle when projectile hits the enemy
+            this.particles.push(
+              new Particle(
+                this,
+                enemy.x + enemy.width * 0.5,
+                enemy.y + enemy.height * 0.5
+              )
+            );
             if (enemy.lives <= 0) {
+              // Draw 10 projectiles when enemy died by projectiles
+              for (let i = 0; i < 10; i++) {
+                this.particles.push(
+                  new Particle(
+                    this,
+                    enemy.x + enemy.width * 0.5,
+                    enemy.y + enemy.height * 0.5
+                  )
+                );
+              }
               enemy.markedForDeletion = true;
               if (!this.gameOver) {
                 this.score += enemy.score;
@@ -467,6 +555,10 @@ window.addEventListener("load", function () {
       this.player.draw(context);
       // Draw ui
       this.ui.draw(context);
+      // Draw particles
+      this.particles.forEach((particle) => {
+        particle.draw(context);
+      });
       // Draw enemies
       this.enemies.forEach((enemy) => {
         enemy.draw(context);
