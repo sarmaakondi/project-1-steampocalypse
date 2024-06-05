@@ -370,6 +370,21 @@ window.addEventListener("load", function () {
     }
   }
 
+  class MoonFish extends Enemy {
+    constructor(game) {
+      super(game);
+      this.width = 227;
+      this.height = 240;
+      this.y = Math.random() * (this.game.height * 0.95 - this.height);
+      this.image = document.getElementById("moonfish");
+      this.frameY = Math.floor(Math.random() * 2);
+      this.lives = 10;
+      this.score = this.lives;
+      this.type = "moon";
+      this.speedX = Math.random() * -1.2 - 2;
+    }
+  }
+
   // Class to handle multiple backgrounds to create parllax effect
   class Layer {
     constructor(game, image, speedModifier) {
@@ -654,6 +669,10 @@ window.addEventListener("load", function () {
               }
               enemy.markedForDeletion = true;
               this.addExplosion(enemy);
+              // Condition to trigger powerup if enemy is moonfish type
+              if (enemy.type === "moon") {
+                this.player.enterPowerUp();
+              }
               // Condition to create drones when hive is destroyed
               if (enemy.type === "hive") {
                 for (let i = 0; i < 5; i++) {
@@ -720,6 +739,8 @@ window.addEventListener("load", function () {
         this.enemies.push(new HiveWhale(this));
       } else if (randomize < 0.8) {
         this.enemies.push(new BulbWhale(this));
+      } else if (randomize < 0.9) {
+        this.enemies.push(new MoonFish(this));
       } else {
         this.enemies.push(new LuckyFish(this));
       }
