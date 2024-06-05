@@ -411,7 +411,12 @@ window.addEventListener("load", function () {
   class Explosion {
     constructor(game, x, y) {
       this.game = game;
+      this.spriteWidth = 200;
       this.spriteHeight = 200;
+      this.width = this.spriteWidth;
+      this.height = this.spriteHeight;
+      this.x = x - this.width * 0.5;
+      this.y = y - this.height * 0.5;
       this.frameX = 0;
       this.maxFrame = 8;
       this.fps = 30;
@@ -452,15 +457,15 @@ window.addEventListener("load", function () {
     constructor(game, x, y) {
       super(game, x, y);
       this.image = document.getElementById("smokeExplosion");
-      this.spriteWidth = 200;
-      this.width = this.spriteWidth;
-      this.height = this.spriteHeight;
-      this.x = x - this.width * 0.5;
-      this.y = y - this.height * 0.5;
     }
   }
 
-  class FireExplosion extends Explosion {}
+  class FireExplosion extends Explosion {
+    constructor(game, x, y) {
+      super(game, x, y);
+      this.image = document.getElementById("fireExplosion");
+    }
+  }
 
   // Class to display the score, timer and other required info to the player
   class UI {
@@ -702,9 +707,17 @@ window.addEventListener("load", function () {
 
     addExplosion(enemy) {
       const randomize = Math.random();
-      if (randomize < 1) {
+      if (randomize < 0.5) {
         this.explosions.push(
           new SmokeExplosion(
+            this,
+            enemy.x + enemy.width * 0.5,
+            enemy.y + enemy.height * 0.5
+          )
+        );
+      } else {
+        this.explosions.push(
+          new FireExplosion(
             this,
             enemy.x + enemy.width * 0.5,
             enemy.y + enemy.height * 0.5
