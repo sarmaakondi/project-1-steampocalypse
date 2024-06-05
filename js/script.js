@@ -86,7 +86,7 @@ window.addEventListener("load", function () {
     update() {
       this.angle += this.va;
       this.speedY += this.gravity;
-      this.x -= this.speedX;
+      this.x -= this.speedX + this.game.speed;
       this.y += this.speedY;
       if (this.y > this.game.height + this.size || this.x < -this.size) {
         this.markedForDeletion = true;
@@ -101,17 +101,21 @@ window.addEventListener("load", function () {
     }
 
     draw(context) {
+      context.save();
+      context.translate(this.x, this.y);
+      context.rotate(this.angle);
       context.drawImage(
         this.image,
         this.frameX * this.spriteSize,
         this.frameY * this.spriteSize,
         this.spriteSize,
         this.spriteSize,
-        this.x,
-        this.y,
+        this.size * -0.5,
+        this.size * -0.5,
         this.size,
         this.size
       );
+      context.restore();
     }
   }
 
