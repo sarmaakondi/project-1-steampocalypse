@@ -29,18 +29,30 @@ canvas {
 
 #play {
   cursor: pointer;
-  background: none;
-  color: #b5a642;
+  color: #14204a;
   font-family: inherit;
-  font-size: 80px;
-  padding: 16px 32px;
-  letter-spacing: 16px;
+  font-size: 40px;
+  padding: 8px 16px;
+  letter-spacing: 8px;
   border: none;
-  border-radius: 8px;
   position: absolute;
-  top: 64%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%);
+  transform: translate(-50%, -50%);
+  /* glassmorph effect */
+  background: rgba(242, 226, 226, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.5s ease;
+}
+
+#play:hover {
+  border-radius: 32px;
+  padding: 8px 32px;
+  background-color: black;
+  color: slateblue;
 }
 
 .hide {

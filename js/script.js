@@ -23,6 +23,8 @@ window.addEventListener("load", function () {
           this.game.player.shootTop();
         } else if (event.key === "d") {
           this.game.debug = !this.game.debug;
+        } else if (event.key === "r") {
+          startGameAndBgm(context)
         }
       });
       // Handle keyup event
@@ -679,6 +681,7 @@ window.addEventListener("load", function () {
         context.textAlign = "center";
         let message1;
         let message2;
+        let message3;
         if (this.game.score >= this.game.winningScore) {
           message1 = "Gears of Glory Grind On! ";
           message2 = "Your mechanical marvel hums with victory!";
@@ -686,6 +689,7 @@ window.addEventListener("load", function () {
           message1 = "A Cog in the Wrong Machine!";
           message2 = "Don't fret, grease the gears and try again!";
         }
+        message3 = "Press 'R' to restart the game"
         context.font = "80px " + this.fontFamily;
         context.fillText(
           message1,
@@ -697,6 +701,11 @@ window.addEventListener("load", function () {
           message2,
           this.game.width * 0.5,
           this.game.height * 0.5 + 25
+        );
+        context.fillText(
+          message3,
+          this.game.width * 0.5,
+          this.game.height * 0.5 + 70
         );
       }
       // Draw the ammo and recharge state
@@ -960,7 +969,6 @@ window.addEventListener("load", function () {
   // Game start condition
   const playButton = this.document.getElementById("play");
   playButton.addEventListener("click", () => {
-    // Play BGM
     playButton.classList.add("hide");
     const bgmSoundController = new SoundController();
     bgmSoundController.bgm();
