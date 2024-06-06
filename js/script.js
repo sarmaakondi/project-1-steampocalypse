@@ -305,10 +305,11 @@ window.addEventListener("load", function () {
     }
 
     draw(context) {
+      // Will be enabled during development/fix
       // Debug mode to enable or disable attack box
-      if (this.game.debug) {
-        context.strokeRect(this.x, this.y, this.width, this.height);
-      }
+      // if (this.game.debug) {
+      //   context.strokeRect(this.x, this.y, this.width, this.height);
+      // }
       // Draw projectiles
       this.projectiles.forEach((projectile) => {
         projectile.draw(context);
@@ -386,9 +387,11 @@ window.addEventListener("load", function () {
     }
 
     draw(context) {
-      if (this.game.debug) {
-        context.strokeRect(this.x, this.y, this.width, this.height);
-      }
+      // Will be enabled during development/fix
+      // Debug mode to enable or disable attack box
+      // if (this.game.debug) {
+      //   context.strokeRect(this.x, this.y, this.width, this.height);
+      // }
       context.drawImage(
         this.image,
         this.frameX * this.width,
@@ -401,8 +404,12 @@ window.addEventListener("load", function () {
         this.height
       );
       if (this.game.debug) {
+        // Debug mode to display or hide the enemy lives
+        context.save();
         context.font = "25px Bangers";
+        context.fillStyle = "white";
         context.fillText(this.lives, this.x, this.y);
+        context.restore();
       }
     }
   }
