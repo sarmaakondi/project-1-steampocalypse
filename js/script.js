@@ -21,10 +21,10 @@ window.addEventListener("load", function () {
           this.game.keys.push(event.key);
         } else if (event.key === " ") {
           this.game.player.shootTop();
-        } else if (event.key === "d") {
+        } else if (event.key.toLowerCase() === "d") {
           this.game.debug = !this.game.debug;
-        } else if (event.key === "r") {
-          startGameAndBgm(context)
+        } else if (this.game.gameOver && event.key.toLowerCase() === "r") {
+          location.reload();
         }
       });
       // Handle keyup event
@@ -49,7 +49,7 @@ window.addEventListener("load", function () {
 
     powerUp() {
       this.powerUpSound.currentTime = 0;
-      this.powerUpSound.volume = 0.2;
+      this.powerUpSound.volume = 0.25;
       this.powerUpSound.play();
     }
 
@@ -73,13 +73,13 @@ window.addEventListener("load", function () {
 
     shield() {
       this.shieldSound.currentTime = 0;
-      this.shieldSound.volume = 0.2;
+      this.shieldSound.volume = 0.25;
       this.shieldSound.play();
     }
 
     bgm() {
       this.bgmSound.currentTime = 0;
-      this.bgmSound.volume = 0.3;
+      this.bgmSound.volume = 0.4;
       this.bgmSound.play();
     }
   }
@@ -135,10 +135,6 @@ window.addEventListener("load", function () {
       this.game = game;
       this.x = x;
       this.y = y;
-      // Disabled projectile without animation
-      // this.width = 10;
-      // this.height = 3;
-      // this.image = document.getElementById("projectile");
       this.image = document.getElementById("fireball");
       this.width = 36.25;
       this.height = 20;
@@ -170,9 +166,6 @@ window.addEventListener("load", function () {
     }
 
     draw(context) {
-      // Disabled old projectile
-      // context.drawImage(this.image, this.x, this.y);
-      // Draw new projectile
       context.drawImage(
         this.image,
         this.frameX * this.width,
@@ -689,7 +682,7 @@ window.addEventListener("load", function () {
           message1 = "A Cog in the Wrong Machine!";
           message2 = "Don't fret, grease the gears and try again!";
         }
-        message3 = "Press 'R' to restart the game"
+        message3 = "Press 'R' to restart the game";
         context.font = "80px " + this.fontFamily;
         context.fillText(
           message1,
@@ -748,6 +741,18 @@ window.addEventListener("load", function () {
       this.timeLimit = 110000;
       this.speed = 1;
       this.debug = false;
+    }
+
+    init() {
+      this.enemyTimer = 0;
+      this.ammo = 20;
+      this.ammoTimer = 0;
+      this.gameOver = false;
+      this.score = 0;
+      this.gameTime = 0;
+      this.enemies = [];
+      this.particles = [];
+      this.explosions = [];
     }
 
     update(deltaTime) {
@@ -858,10 +863,6 @@ window.addEventListener("load", function () {
               if (!this.gameOver) {
                 this.score += enemy.score;
               }
-              // Disabled below to ensure game runs for the full time limit
-              // if (this.score >= this.winningScore) {
-              //   this.gameOver = true;
-              // }
             }
           }
         });
@@ -958,6 +959,9 @@ window.addEventListener("load", function () {
 
   // Animation loop setup
   function animate(timeStamp) {
+    if (!lastTimeStamp) {
+      lastTimeStamp = timeStamp;
+    }
     const deltaTime = timeStamp - lastTimeStamp;
     lastTimeStamp = timeStamp;
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -972,6 +976,11 @@ window.addEventListener("load", function () {
     playButton.classList.add("hide");
     const bgmSoundController = new SoundController();
     bgmSoundController.bgm();
-    animate(0);
+    game.init();
+    lastTimeStamp = 0;
+    requestAnimationFrame((timeStamp) => {
+      lastTimeStamp = timeStamp;
+      animate(timeStamp);
+    });
   });
 });
