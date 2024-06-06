@@ -1,55 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Steampocalypse</title>
-    <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bangers&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <canvas></canvas>
 
-    <!-- Characters -->
-    <img src="assets/characters/player.png" id="player" />
-    <img src="assets/characters/angler1.png" id="angler1" />
-    <img src="assets/characters/angler2.png" id="angler2" />
-    <img src="assets/characters/lucky.png" id="lucky" />
-    <img src="assets/characters/hivewhale.png" id="hivewhale" />
-    <img src="assets/characters/drone.png" id="drone" />
-    <img src="assets/characters/bulbwhale.png" id="bulbwhale" />
-    <img src="assets/characters/moonfish.png" id="moonfish" />
-    <img src="assets/characters/stalker.png" id="stalker" />
-    <img src="assets/characters/razorfin.png" id="razorfin" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Steampocalypse</title>
+  <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
 
-    <!-- Sounds -->
-    <audio src="assets/audio/bgm.mp3" id="bgm"></audio>
-    <audio src="assets/audio/powerup.mp3" id="powerup"></audio>
-    <audio src="assets/audio/powerdown.mp3" id="powerdown"></audio>
-    <audio src="assets/audio/explosion.wav" id="explosion"></audio>
-    <audio src="assets/audio/shot.ogg" id="shot"></audio>
-    <audio src="assets/audio/shield.m4a" id="shieldSound"></audio>
+<body>
+  <canvas> </canvas>
 
-    <!-- Props -->
-    <img src="assets/props/projectile.png" id="projectile" />
-    <img src="assets/props/gears.png" id="gears" />
-    <img src="assets/props/smokeExplosion.png" id="smokeExplosion" />
-    <img src="assets/props/fireExplosion.png" id="fireExplosion" />
-    <img src="assets/props/shield.png" id="shield" />
-    <img src="assets/props/fireball.png" id="fireball" />
+  <button id="play">PLAY</button>
 
-    <!-- Environment -->
-    <img src="assets/environment/layer1.png" id="layer1" />
-    <img src="assets/environment/layer2.png" id="layer2" />
-    <img src="assets/environment/layer3.png" id="layer3" />
-    <img src="assets/environment/layer4.png" id="layer4" />
+  <!-- Characters -->
+  <img src="assets/characters/player.png" id="player" />
+  <img src="assets/characters/angler1.png" id="angler1" />
+  <img src="assets/characters/angler2.png" id="angler2" />
+  <img src="assets/characters/lucky.png" id="lucky" />
+  <img src="assets/characters/hivewhale.png" id="hivewhale" />
+  <img src="assets/characters/drone.png" id="drone" />
+  <img src="assets/characters/bulbwhale.png" id="bulbwhale" />
+  <img src="assets/characters/moonfish.png" id="moonfish" />
+  <img src="assets/characters/stalker.png" id="stalker" />
+  <img src="assets/characters/razorfin.png" id="razorfin" />
 
-    <script src="js/script.js"></script>
-  </body>
+  <!-- Sounds -->
+  <audio src="assets/audio/bgm.mp3" id="bgm"></audio>
+  <audio src="assets/audio/powerup.mp3" id="powerup"></audio>
+  <audio src="assets/audio/powerdown.mp3" id="powerdown"></audio>
+  <audio src="assets/audio/explosion.wav" id="explosion"></audio>
+  <audio src="assets/audio/shot.ogg" id="shot"></audio>
+  <audio src="assets/audio/shield.m4a" id="shieldSound"></audio>
+
+  <!-- Props -->
+  <!-- Disabled below and added fireball.png -->
+  <!-- <img src="assets/props/projectile.png" id="projectile" /> -->
+  <img src="assets/props/gears.png" id="gears" />
+  <img src="assets/props/smokeExplosion.png" id="smokeExplosion" />
+  <img src="assets/props/fireExplosion.png" id="fireExplosion" />
+  <img src="assets/props/shield.png" id="shield" />
+  <img src="assets/props/fireball.png" id="fireball" />
+
+  <!-- Environment -->
+  <img src="assets/environment/layer1.png" id="layer1" />
+  <img src="assets/environment/layer2.png" id="layer2" />
+  <img src="assets/environment/layer3.png" id="layer3" />
+  <img src="assets/environment/layer4.png" id="layer4" />
+  <!-- Using layer3 as a static image for the game start screen -->
+  <div id="background">
+    <img src="assets/environment/bg1.png" id="bg1" />
+    <img src="assets/environment/bg2.png" id="bg2" />
+    <img src="assets/environment/bg3.png" id="bg3" />
+    <img src="assets/environment/bg4.png" id="bg4" />
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+
 </html>

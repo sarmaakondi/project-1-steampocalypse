@@ -5,7 +5,7 @@ window.addEventListener("load", function () {
   // Canvas setup
   const canvas = document.querySelector("canvas");
   const context = canvas.getContext("2d");
-  canvas.width = 1200;
+  canvas.width = 1768;
   canvas.height = 500;
 
   // Class to keep track of the specified player input
@@ -82,10 +82,6 @@ window.addEventListener("load", function () {
     }
   }
 
-  // Play BGM
-  // const bgmSoundController = new SoundController();
-  // bgmSoundController.bgm();
-
   // Class to handle the shield and its animation
   class Shield {
     constructor(game) {
@@ -125,7 +121,7 @@ window.addEventListener("load", function () {
       );
     }
 
-    reset() {
+    animate() {
       this.frameX = 0;
       this.game.sound.shield();
     }
@@ -740,7 +736,7 @@ window.addEventListener("load", function () {
       this.score = 0;
       this.winningScore = 300;
       this.gameTime = 0;
-      this.timeLimit = 10000;
+      this.timeLimit = 110000;
       this.speed = 1;
       this.debug = false;
     }
@@ -789,7 +785,7 @@ window.addEventListener("load", function () {
         if (this.checkCollision(this.player, enemy)) {
           enemy.markedForDeletion = true;
           this.addExplosion(enemy);
-          this.shield.reset();
+          this.shield.animate();
           // Draw 10 projectiles when enemy collides with player
           for (let i = 0; i < enemy.score; i++) {
             this.particles.push(
@@ -961,5 +957,13 @@ window.addEventListener("load", function () {
     requestAnimationFrame(animate);
   }
 
-  animate(0);
+  // Game start condition
+  const playButton = this.document.getElementById("play");
+  playButton.addEventListener("click", () => {
+    // Play BGM
+    playButton.classList.add("hide");
+    const bgmSoundController = new SoundController();
+    bgmSoundController.bgm();
+    animate(0);
+  });
 });
