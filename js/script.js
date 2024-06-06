@@ -974,6 +974,7 @@ window.addEventListener("load", function () {
   const playButton = this.document.getElementById("play");
   playButton.addEventListener("click", () => {
     playButton.classList.add("hide");
+    document.getElementById("instructions").classList.add("hide");
     const bgmSoundController = new SoundController();
     bgmSoundController.bgm();
     game.init();

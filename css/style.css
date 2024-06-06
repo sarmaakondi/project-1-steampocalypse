@@ -39,6 +39,7 @@ canvas {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  margin-top: 90px;
   /* glassmorph effect */
   background: rgba(242, 226, 226, 0.2);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -80,4 +81,37 @@ canvas {
 #stalker,
 #razorfin {
   display: none;
+}
+
+#instructions {
+  width: 650px;
+  font-size: 20px;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  /* glassmorph effect */
+  background: rgba(242, 226, 226, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.5s ease;
+  padding: 8px 36px;
+}
+
+#instructions:hover {
+  border-radius: 16px;
+  padding: 12px 42px;
+  background-color: black;
+  color: slateblue;
+}
+
+#instructions p {
+  font-size: 42px;
+}
+
+#instructions ul {
+list-style-type: "⚙️  ";
 }
