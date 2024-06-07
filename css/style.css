@@ -5,6 +5,11 @@
   font-family: "Bangers", system-ui;
 }
 
+body {
+  background: hsl(201, 55%, 41%);
+  overflow: hidden;
+}
+
 canvas {
   position: absolute;
   top: 50%;
