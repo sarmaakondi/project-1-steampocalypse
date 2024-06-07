@@ -44,7 +44,6 @@ window.addEventListener("load", function () {
       this.explosionSound = document.getElementById("explosion");
       this.shotSound = document.getElementById("shot");
       this.shieldSound = document.getElementById("shieldSound");
-      this.bgmSound = document.getElementById("bgm");
     }
 
     powerUp() {
@@ -73,14 +72,8 @@ window.addEventListener("load", function () {
 
     shield() {
       this.shieldSound.currentTime = 0;
-      this.shieldSound.volume = 0.25;
+      this.shieldSound.volume = 0.3;
       this.shieldSound.play();
-    }
-
-    bgm() {
-      this.bgmSound.currentTime = 0;
-      this.bgmSound.volume = 0.4;
-      this.bgmSound.play();
     }
   }
 
@@ -982,8 +975,9 @@ window.addEventListener("load", function () {
   playButton.addEventListener("click", () => {
     playButton.classList.add("hide");
     document.getElementById("instructions").classList.add("hide");
-    const bgmSoundController = new SoundController();
-    bgmSoundController.bgm();
+    const bgmSound = document.getElementById("bgm");
+    bgmSound.volume = 0.5;
+    bgmSound.play();
     game.init();
     lastTimeStamp = 0;
     requestAnimationFrame((timeStamp) => {
